@@ -1,0 +1,21 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "A simple framework for creating Discord bots",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discordjs",
+    "discord-bot"
+  ],
+  "author": "Brad 'adigitalmonk' Boudreau",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.0.0",
+    "node-opus": "^0.2.4",
+    "opusscript": "0.0.1",
+    "uws": "^0.12.0"
+  }
+}
