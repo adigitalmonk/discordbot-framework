@@ -1,5 +1,5 @@
 {
-  "name": "discord-bot",
+  "name": "discordbot-framework",
   "version": "1.0.0",
   "description": "A simple framework for creating Discord bots",
   "main": "index.js",
@@ -10,6 +10,10 @@
     "discordjs",
     "discord-bot"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adigitalmonk/discordbot-framework"
+  },
   "author": "Brad 'adigitalmonk' Boudreau",
   "license": "ISC",
   "dependencies": {
