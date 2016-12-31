@@ -11,7 +11,7 @@ This project provides a basic wrapper around functionality presented by [discord
 ### Load the Module
 The first step to get started is to load the scaffolding.
 ```
-const bot = require('discord-bot');
+const bot = require('discordbot-framework');
 ```
 
 ### Add the configuration
