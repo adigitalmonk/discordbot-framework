@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const Auditor = require('./auditor.js');
 const Registrar = require('./registrar.js');
 const Configuration = require('./configuration.js');
+const Scheduler = require('./scheduler.js');
 
 /**
  * Scaffolding core structure for the discordjs client
@@ -19,6 +20,7 @@ class Framework {
         this.registrar = new Registrar();
         this.configuration = new Configuration();
         this.auditor = new Auditor();
+        this.scheduler = new Scheduler(this); // Scheduler gets a reference to this
         this.bot = new Discord.Client();
         
         // The listener for the bot to enable commands
@@ -64,6 +66,49 @@ class Framework {
      */
     observe(event, callback) {
         this.bot.on(event, callback);
+    }
+
+    getClient() {
+        return this.bot;
+    }
+
+    getGuilds() {
+        return this.bot.guilds;
+    }
+
+    /* Scheduler */
+    /**
+     * Add a callback to run periodically
+     * The schedule object is used to pass in the parameters used for schedule:
+     * -      name: The name of the task to store the schedule for (required)
+     * - frequency: How often to run the task (required)
+     * -  callback: The callback to fire for the task
+     * -  begin_at: The time to start this task at, if omitted will be now
+     * -   context: The context to be passed to the callback, if omitted will be the context stored in the Scheduler 
+     * 
+     * @param {object} options The parameters used for scheduling the task
+     * @returns {this} This object (for chaining)
+     * 
+     * @memberOf Scheduler
+     */
+    schedule(options) {
+        this.scheduler.schedule(options);
+        return this;
+    }
+
+    /**
+     * Remove a task's schedule from the task list
+     * Once a schedule is removed, the task will stop running.
+     * Note: It does not stop any currently pending tasks, but it stops them from firing in the future.
+     * 
+     * @param {any} task The name of the schedule to purge, based on the name provided when scheduling
+     * @returns {this} This object (for chaining)
+     * 
+     * @memberOf Scheduler
+     */
+    unschedule(task_name) {
+        this.scheduler.unschedule(task_name);
+        return this;
     }
 
     /* Commands */
@@ -112,7 +157,7 @@ class Framework {
      * 
      * @memberOf Framework
      */
-    disconnect() {
+    disconnect() {  
         this.active = false;
         return this.bot.destroy();
     }
