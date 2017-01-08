@@ -1,17 +1,13 @@
 class Queue {
     constructor() {
-        this.tasks = [];
     }
 
-    cancel(queue_id) {
-        let instance = this.tasks[queue_id];
+    cancel(timer) {
         return clearTimeout(instance);
     }
 
     add(callback, timeout) {
-        let timer = setTimeout(callback, timeout);
-        this.tasks.push(timer);
-        return this.tasks.length - 1;
+        return setTimeout(callback, timeout);
     }
 
     getQueueDelay(end_date, start_date) {
