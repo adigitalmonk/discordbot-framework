@@ -123,7 +123,7 @@ class Scheduler {
 
         // Context is optional here
         // If not defined, just pull for this
-        options.context = options.context || this.context;
+        options.context = options.context === undefined ?  this.context : options.context;
 
         // Store the options into the task list
         this.tasks[options.name] = options;
