@@ -84,7 +84,9 @@ class Scheduler {
      * - frequency: How often to run the task (required)
      * -  callback: The callback to fire for the task
      * -  begin_at: The time to start this task at, if omitted will be now
-     * -   context: The context to be passed to the callback, if omitted will be the context stored in the Scheduler 
+     * -   context: The context to be passed to the callback, if omitted will be the context stored in the scheduler
+     * - immediate: Start immediately? Default to false
+     * -      once: Only fire it on the next schedule once. Default to false.
      * 
      * @param {object} options The parameters used for scheduling the task
      * @returns {this} This object (for chaining)
@@ -103,24 +105,23 @@ class Scheduler {
             throw new TypeError('invalid-missing-options');
         }
 
+        // Do we only do this task once?
+        options.once = options.once || false;
+
         // Context is optional here
         // If not defined, just pull for this
         options.context = options.context || this.context;
-        
-        // Get the time to start running this task at
-        const begin = options.begin_at;
-        if (options.begin_at) {
-            // We only need the start time
-            // the first time we options this
-            // Toss it immediately so we don't try to queue it for the original time frame
-            delete options.begin_at;
-        }
 
         // Store the options into the task list
         this.tasks[options.name] = options;
 
         // Start the first queue of this task
-        this.enqueue(options.name, begin);
+        this.enqueue(options.name, options.begin_at);
+
+        // If declared as immediate, it'll fire immediately as well
+        if (options.immediate) {
+            options.callback(options.context);
+        }
 
         // Return this so we can chain more
         return this;
@@ -142,9 +143,14 @@ class Scheduler {
             return true;
         }
 
+        // Get the next timestamp from now for this object
         let nextDate = this.getNext(options.frequency, begin_at);
+
+        // Queue the callback for the callback so we can call back the callback after we fire the callback
         return this.queue.addForTime((() => {
-            this.enqueue(options.name);
+            if (!options.once) {
+                this.enqueue(options.name);
+            }
             options.callback(options.context);
        }).bind(this), nextDate);
     }
