@@ -20,9 +20,11 @@ class Framework {
         this.registrar = new Registrar();
         this.configuration = new Configuration();
         this.auditor = new Auditor();
-        this.scheduler = new Scheduler(this); // Scheduler gets a reference to this
         this.bot = new Discord.Client();
-        
+
+        // Scheduler gets a reference to this as the default context for callback
+        this.scheduler = new Scheduler(this);
+
         // The listener for the bot to enable commands
         this.enableCommands();
         
