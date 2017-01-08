@@ -86,12 +86,14 @@ class Framework {
      * - frequency: How often to run the task (required)
      * -  callback: The callback to fire for the task
      * -  begin_at: The time to start this task at, if omitted will be now
-     * -   context: The context to be passed to the callback, if omitted will be the context stored in the Scheduler 
+     * -   context: The context to be passed to the callback, if omitted will be the context stored in the scheduler
+     * - immediate: Start immediately? Default to false
+     * -      once: Only fire it on the next schedule once. Default to false.
      * 
      * @param {object} options The parameters used for scheduling the task
      * @returns {this} This object (for chaining)
      * 
-     * @memberOf Scheduler
+     * @memberOf Framework
      */
     schedule(options) {
         this.scheduler.schedule(options);
@@ -159,7 +161,7 @@ class Framework {
      * 
      * @memberOf Framework
      */
-    disconnect() {  
+    disconnect() {
         this.active = false;
         return this.bot.destroy();
     }
