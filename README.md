@@ -77,17 +77,33 @@ bot.schedule({
     }
 });
 ```
-By default, the parameter sent in to the callback is a reference to the framework itself, but this can be specified as one of the parameters.
+By default, the parameter sent in to the callback is a reference to the framework itself, but this can be specified as one of the parameters as seen in the below (fairly useless) example.
+```
+// Create some data we want to send in
+let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+bot.schedule({
+    'name'      : 'hourly-notice', 
+    'frequency' : 'hourly',
+    'start_of'  : 'hour',
+    'context'   : {bot, days}, // Short hand object notation, we still want to send the bot instance, but we want to also send in the data we created
+    'callback'  : (context) => {
+        context.bot.getGuilds().first().defaultChannel.sendMessage(`Hello! I am only available on the following days: ${context.days.join(', ')}`);
+    }
+});
+```
+
 
 |Parameter|Data Type|Default Value|Note|
 |---:|:---:|:---:|:---|
-|name|String|_(none)_|The name of the task for scheduling purposes. Names must be unique. **(Required)**|
-|frequency|String|_(none)_|The timeframe for which to fire the event; see the supported schedules table below. **(Required)**|
-|callback|function|_(none)_|The callback to trigger on the schedule. **(Required)**|
+|name|String|_(none)_|**(Required)** The name of the task for scheduling purposes. Names must be unique.|
+|frequency|String|_(none)_|**(Required)** The timeframe for which to fire the event; see the supported schedules table below.|
+|callback|function|_(none)_|**(Required)** The callback to trigger on the schedule.|
 |begin_at|String/momentjs Timestamp|now|A timestamp at which point to start this task; can be string or momentjs instance.|
+|start_of|String|_(none)_|This is used to jump your task the start of the next schedule. e.g., `hour` means start of next hour, start at `3:44 -> 4:00 -> 5:00`.  If omitted, it will just schedule for the next increment. e.g., `3:44 -> 4:44 -> 5:44`.|
 |context|Any|Framework|This is the value that will be passed into the callback parameter, the default is the instance of the framework but this would allow you to pass in anything.|
 |immediate|Boolean|false|This will fire the function once before scheduling it|
-|once|Boolean|false|Whether or not reschedule the task after it has run the first time (not including the immediate instance)|
+|once|Boolean|false|Whether or not to reschedule the task after it has run the first time (not including the `immediate` run, so `once` + `immediate` = two executions)|
 
 |Frequency|Definition|
 |----:|:----|
@@ -97,8 +113,23 @@ By default, the parameter sent in to the callback is a reference to the framewor
 |daily|Every day|
 |weekly|Every week|
 |monthly|Every month|
-
 _* `deciminute` was created for testing, but the option was left because there's probably a use case for it. Highly, highly, highly recommend **AGAINST** hitting the Discord API every ten seconds._
+
+|`start_of` Options|
+|:---:|
+|year|
+|month|
+|quarter|
+|week|
+|isoweek|
+|day|
+|date|
+|hour|
+|minute|
+|second|
+
+_This is handled using the `momentjs` `startOf` function. For examples of what specifically these options mean, see the [MomentJS documentation](http://momentjs.com/docs/#/manipulating/start-of/) regarding the function._
+
 
 ## Connect!
 Now that our bot is configured, has it's listeners, and commands added, we can start up the bot.

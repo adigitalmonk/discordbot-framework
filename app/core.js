@@ -89,6 +89,7 @@ class Framework {
      * -   context: The context to be passed to the callback, if omitted will be the context stored in the scheduler
      * - immediate: Start immediately? Default to false
      * -      once: Only fire it on the next schedule once. Default to false.
+     * -  start_of: The timeframe to round the schedule to (ceiling)
      * 
      * @param {object} options The parameters used for scheduling the task
      * @returns {this} This object (for chaining)

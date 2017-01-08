@@ -41,9 +41,16 @@ class Scheduler {
      * 
      * @memberOf Scheduler
      */
-    getNext(frequency, beginAt) {
+    getNext(task) {
+        let {frequency, begin_at, start_of} = this.tasks[task];
+
         // From the beginAt time frame, adjust by the appropriate adjustment
-        let nextDate = moment(beginAt).add(timeAdjustment[frequency]); 
+        let nextDate = moment(begin_at).add(timeAdjustment[frequency]);
+
+        if (start_of) {
+            nextDate.startOf(start_of);
+        }
+
         // Return the string timeframe for our timer
         return nextDate.format('YYYY-MM-DD HH:mm:ss');
     }
@@ -87,6 +94,7 @@ class Scheduler {
      * -   context: The context to be passed to the callback, if omitted will be the context stored in the scheduler
      * - immediate: Start immediately? Default to false
      * -      once: Only fire it on the next schedule once. Default to false.
+     * -  start_of: The timeframe to round the schedule to (ceiling)
      * 
      * @param {object} options The parameters used for scheduling the task
      * @returns {this} This object (for chaining)
@@ -143,8 +151,8 @@ class Scheduler {
             return true;
         }
 
-        // Get the next timestamp from now for this object
-        let nextDate = this.getNext(options.frequency, begin_at);
+        // Get the next timestamp from now for this task
+        let nextDate = this.getNext(task);
 
         // Queue the callback for the callback so we can call back the callback after we fire the callback
         return this.queue.addForTime((() => {
