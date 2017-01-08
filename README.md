@@ -93,7 +93,6 @@ bot.schedule({
 });
 ```
 
-
 |Parameter|Data Type|Default Value|Note|
 |---:|:---:|:---:|:---|
 |name|String|_(none)_|**(Required)** The name of the task for scheduling purposes. Names must be unique.|
@@ -105,16 +104,18 @@ bot.schedule({
 |immediate|Boolean|false|This will fire the function once before scheduling it|
 |once|Boolean|false|Whether or not to reschedule the task after it has run the first time (not including the `immediate` run, so `once` + `immediate` = two executions)|
 
+The following frequencies are defined as within the limitations of NodeJS's `setTimeout` / `setInterval` maximum supported delay.
 |Frequency|Definition|
 |----:|:----|
 |deciminute|Every ten seconds*|
 |minute|Every minute|
 |hourly|Every hour|
 |daily|Every day|
-|weekly|Every week|
-|monthly|Every month|
+|weekly|Every 7 days|
+|biweekly|Every 14 days|
 _* `deciminute` was created for testing, but the option was left because there's probably a use case for it. Highly, highly, highly recommend **AGAINST** hitting the Discord API every ten seconds._
 
+The following `start_of` options are supported.
 |`start_of` Options|
 |:---:|
 |year|
@@ -127,7 +128,6 @@ _* `deciminute` was created for testing, but the option was left because there's
 |hour|
 |minute|
 |second|
-
 _This is handled using the `momentjs` `startOf` function. For examples of what specifically these options mean, see the [MomentJS documentation](http://momentjs.com/docs/#/manipulating/start-of/) regarding the function._
 
 

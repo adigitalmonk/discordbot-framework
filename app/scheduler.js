@@ -9,7 +9,7 @@ const timeAdjustment = {
     'hourly'    : { 'hours' : 1 },
     'daily'     : { 'days' : 1 },
     'weekly'    : { 'days' : 7 },
-    'monthly'   : { 'months' : 1 }
+    'biweekly'   : { 'days' : 14 }
 };
 
 /**
@@ -80,6 +80,10 @@ class Scheduler {
      * @memberOf Scheduler
      */
     unschedule(task) {
+        if (!this.tasks[task]) {
+            return;
+        }
+        this.queue.stop(this.tasks[task].instance);
         delete this.tasks[task];
         return this;
     }
@@ -107,6 +111,7 @@ class Scheduler {
         if (
             options === undefined 
             || options.frequency === undefined
+            || timeAdjustment[options.frequency] === undefined
             || options.name  === undefined
             || options.callback === undefined
         ) {
@@ -124,7 +129,7 @@ class Scheduler {
         this.tasks[options.name] = options;
 
         // Start the first queue of this task
-        this.enqueue(options.name, options.begin_at);
+        this.enqueue(options.name);
 
         // If declared as immediate, it'll fire immediately as well
         if (options.immediate) {
@@ -143,7 +148,7 @@ class Scheduler {
      * 
      * @memberOf Scheduler
      */
-    enqueue(task, begin_at) {
+    enqueue(task) {
         let options = this.tasks[task];
         if (options === undefined) { 
             // The task was either unscheduled
@@ -155,12 +160,14 @@ class Scheduler {
         let nextDate = this.getNext(task);
 
         // Queue the callback for the callback so we can call back the callback after we fire the callback
-        return this.queue.addForTime((() => {
+        options.instance = this.queue.addForTime((() => {
             if (!options.once) {
                 this.enqueue(options.name);
             }
             options.callback(options.context);
        }).bind(this), nextDate);
+
+       return this;
     }
 
 }
