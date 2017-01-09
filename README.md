@@ -189,3 +189,15 @@ bot.connect();
 - [momentJS](http://momentjs.com/)
 - [NodeJS DotEnv](https://www.npmjs.com/package/dotenv)
 
+# Change Log
+## v1.1.0
+- Support for scheduling tasks to run on rotations!
+
+## v1.0.1
+- Fixed some derps in the README file
+
+## v1.0.0
+- Initial Release!
+- Support for:
+  - Adding commands
+  - Listening for events
