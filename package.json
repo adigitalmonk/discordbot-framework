@@ -1,6 +1,6 @@
 {
   "name": "discordbot-framework",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A simple framework for creating Discord bots",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^11.0.0",
+    "moment": "^2.17.1",
     "node-opus": "^0.2.4",
     "opusscript": "0.0.1",
     "uws": "^0.12.0"
