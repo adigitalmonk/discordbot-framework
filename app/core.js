@@ -70,10 +70,25 @@ class Framework {
         this.bot.on(event, callback);
     }
 
+    
+    /**
+     * Return the stored discordjs Client object
+     * 
+     * @returns {Client} DiscordJS Client object
+     * 
+     * @memberOf Framework
+     */
     getClient() {
         return this.bot;
     }
 
+    /**
+     * Get a collection of Guilds to which our bot is connected
+     * 
+     * @returns {Collection<string, Guild>} Collection of guild objects that the bot belongs to
+     * 
+     * @memberOf Framework
+     */
     getGuilds() {
         return this.bot.guilds;
     }
