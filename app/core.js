@@ -214,8 +214,9 @@ class Framework {
                     let args = msg.content.split(" ");
                     let cmd_name = args.shift().replace(prefix, "").toLowerCase();
                     this.auditor.track(msg.author.id, cmd_name);
+                    let cmd = this.registrar.lookup(cmd_name);
 
-                    if (!this.auditor.permitted(msg.author.id, cmd_name, this.registrar.lookup(cmd_name).rate_limit)) {
+                    if (!cmd || !this.auditor.permitted(msg.author.id, cmd_name, cmd.rate_limit)) {
                         return;
                     }
 

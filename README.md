@@ -190,6 +190,9 @@ bot.connect();
 - [NodeJS DotEnv](https://www.npmjs.com/package/dotenv)
 
 # Change Log
+## v1.1.1
+- Fix an issue in which the bot would crash if someone used a command that didn't exist
+
 ## v1.1.0
 - Support for scheduling tasks to run on rotations!
 
