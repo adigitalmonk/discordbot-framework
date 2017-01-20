@@ -1,6 +1,6 @@
 {
   "name": "discordbot-framework",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple framework for creating Discord bots",
   "main": "index.js",
   "scripts": {
