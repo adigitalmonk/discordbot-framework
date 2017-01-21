@@ -2,8 +2,10 @@
 // If the value is undefined, there is no default and it is
 //      required to be configured when registering (e.g., callback)
 const param_options = {
-    'callback' : undefined, // The callback to use for the command
-    'rate_limit' : 3        // Number of uses/minute before we rate limit a user
+    'callback'      : undefined, // The callback to use for the command
+    'rate_limit'    : 3,       // Number of uses/minute before we rate limit a user
+    'help_message'  : '[undocumented]', // The help / usage information for a command
+    'allow_dm'      : false, // Whether a command can be used in a direct message
 };
 
 class Registrar {
@@ -13,6 +15,17 @@ class Registrar {
      */
     constructor() {
         this.cmd_map = {};
+    }
+
+    getHelp() {
+        let help = [];
+        for (let cmd in this.cmd_map) {
+            help.push({
+                'name' : cmd, 
+                'value' : this.cmd_map[cmd].help_message
+            });
+        }
+        return help;
     }
 
     /**

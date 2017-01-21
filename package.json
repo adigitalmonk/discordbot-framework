@@ -1,10 +1,12 @@
 {
   "name": "discordbot-framework",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A simple framework for creating Discord bots",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preversion": "git add -u",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
     "discordjs",

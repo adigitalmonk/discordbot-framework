@@ -213,18 +213,29 @@ class Framework {
                 if (msg.content.startsWith(prefix)) { // The msg starts with the commands prefix
                     let args = msg.content.split(" ");
                     let cmd_name = args.shift().replace(prefix, "").toLowerCase();
-                    this.auditor.track(msg.author.id, cmd_name);
                     let cmd = this.registrar.lookup(cmd_name);
 
-                    if (!cmd || !this.auditor.permitted(msg.author.id, cmd_name, cmd.rate_limit)) {
+                    if (
+                        !cmd // command is defined
+                        || !this.auditor.permitted(msg.author.id, cmd_name, cmd.rate_limit) // User isn't over the rate limit
+                        || (['dm', 'group'].indexOf(msg.channel.type) > -1 && !cmd.allow_dm) // Command isn't in a DM
+                    ) {
                         return;
                     }
 
+                    // Record that the user used a command
+                    this.auditor.track(msg.author.id, cmd_name);
+
                     let cmd_params = this.registrar.lookup(cmd_name);
-                    cmd_params.callback(msg);
+                    // Commands get instance of the msg and reference to this bot
+                    cmd_params.callback(msg, this);
                 }
             }
         ).bind(this));
+    }
+
+    getCmdHelp() {
+        return this.registrar.getHelp();
     }
 }
 
