@@ -195,6 +195,7 @@ class Framework {
                 if (
                     allowed_channels
                     && allowed_channels.indexOf(msg.channel.name) < 0
+                    && msg.channel.type === 'text'
                 ) {
                     // If allowed_channels isn't empty and the channel is in the list of allowed channels
                     return;
