@@ -162,6 +162,7 @@ The following frequencies are defined as within the limitations of NodeJS's `set
 _* `deciminute` was created for testing, but the option was left because there's probably a use case for it. Highly, highly, highly recommend **AGAINST** hitting the Discord API every ten seconds._
 
 The following `start_of` options are supported.
+
 |`start_of` Options|
 |:---:|
 |year|
@@ -174,6 +175,7 @@ The following `start_of` options are supported.
 |hour|
 |minute|
 |second|
+
 _This is handled using the `momentjs` `startOf` function. For examples of what specifically these options mean, see the [MomentJS documentation](http://momentjs.com/docs/#/manipulating/start-of/) regarding the function._
 
 
