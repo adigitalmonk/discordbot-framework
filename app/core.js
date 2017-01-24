@@ -29,7 +29,15 @@ class Framework {
         this.enableCommands();
         
         // This is needed to boot the system
-        this.bot.on('ready', () => console.log('Connected!'));
+        this.bot.on('ready', (
+            () => {
+                console.log(this.configuration.getSetting('boot_msg'));
+                const gameSetting = this.configuration.getSetting('playing_msg');
+                if (gameSetting) {
+                    this.bot.user.setGame(gameSetting);
+                }
+            }
+        ).bind(this));
 
         this.active = false;
     }

@@ -37,6 +37,18 @@ class Configuration {
                 'description'   : 'Whether or not the bot can respond to other bots',
                 'type'          : 'boolean',
                 'default'       : false
+            },
+            {
+                'name'          : 'boot_msg',
+                'description'   : 'Message shown on the command line when the bot connects.',
+                'type'          : 'string',
+                'default'       : 'Connected!'
+            },
+            {
+                'name'          : 'playing_msg',
+                'description'   : 'The message shown as the "Playing ____" message for the bot',
+                'type'          : 'string',
+                'default'       : false
             }
         ];
 
