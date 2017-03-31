@@ -54,7 +54,7 @@ We can also add commands to the bot.
 ```
 bot.bind('syn', { 
     'callback'      : (msg) => msg.channel.sendMessage('Ack!'),
-    'help_message'  : 'Is the bot listening? \n\tUsage: `!syn`'
+    'help_message'  : 'Is the bot listening? \n\tUsage: `!syn`',
     'allow_dm'      : true 
 });
 ```
@@ -257,6 +257,10 @@ bot.connect();
 |[NodeJS DotEnv](https://www.npmjs.com/package/dotenv)|Project designed for the purpose of loading configurations into projects|
 
 # Change Log
+## v1.3.1
+- Updated the dependencies to account for an issue with NPM loading `uws`.
+- Fixed a small typo in the README, oops!
+
 ## v1.3.0
 - Added new configuration options `playing_msg` and `boot_msg`
 
