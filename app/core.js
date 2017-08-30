@@ -3,6 +3,7 @@ const Auditor = require('./auditor.js');
 const Registrar = require('./registrar.js');
 const Configuration = require('./configuration.js');
 const Scheduler = require('./scheduler.js');
+const Handler = require('./handler.js');
 
 /**
  * Scaffolding core structure for the discordjs client
@@ -20,14 +21,21 @@ class Framework {
         this.registrar = new Registrar();
         this.configuration = new Configuration();
         this.auditor = new Auditor();
+        this.handler = new Handler();
         this.bot = new Discord.Client();
 
         // Scheduler gets a reference to this as the default context for callback
         this.scheduler = new Scheduler(this);
 
+        // Enable custom handlers for messages
+        this.enableHandlers();
+
         // The listener for the bot to enable commands
-        this.enableCommands();
-        
+        this.addHandler('commands', {
+            'callback': require('./handlers/commands.js'),
+            'context': this
+        });
+  
         // This is needed to boot the system
         this.bot.on('ready', (
             () => {
@@ -190,57 +198,22 @@ class Framework {
         return this.bot.destroy();
     }
 
-    /**
-     * This is the function that binds the 'message' event for listening for commands.
-     * This should only be called once during the constructor; every time it gets run will add another place to run commands (duplicating the callback calls)
-     * 
-     * @memberOf Framework
-     */
-    enableCommands() {
-        this.bot.on('message', (
-            msg => {
-                let allowed_channels = this.configuration.getSetting('allowed_channels');
-                if (
-                    allowed_channels
-                    && allowed_channels.indexOf(msg.channel.name) < 0
-                    && msg.channel.type === 'text'
-                ) {
-                    // If allowed_channels isn't empty and the channel is in the list of allowed channels
-                    return;
-                }
+    addHandler(handler, params) {
+        this.handler.add(handler, params);
+        return this;
+    }
 
-                // Act on messages from bots?
-                if (
-                    !this.configuration.getSetting('respond_to_bots') 
-                    && msg.author.bot
-                ) {
-                    // If respond to bots is set to false and the msg is from a bot, stop
-                    return;
-                }
+    removeHandler(handler) {
+        this.handler.del(handler);
+        return this;
+    }
 
-                let prefix = this.configuration.getSetting('command_prefix');
-                if (msg.content.startsWith(prefix)) { // The msg starts with the commands prefix
-                    let args = msg.content.split(" ");
-                    let cmd_name = args.shift().replace(prefix, "").toLowerCase();
-                    let cmd = this.registrar.lookup(cmd_name);
-
-                    if (
-                        !cmd // command is defined
-                        || !this.auditor.permitted(msg.author.id, cmd_name, cmd.rate_limit) // User isn't over the rate limit
-                        || (['dm', 'group'].indexOf(msg.channel.type) > -1 && !cmd.allow_dm) // Command isn't in a DM
-                    ) {
-                        return;
-                    }
-
-                    // Record that the user used a command
-                    this.auditor.track(msg.author.id, cmd_name);
-
-                    let cmd_params = this.registrar.lookup(cmd_name);
-                    // Commands get instance of the msg and reference to this bot
-                    cmd_params.callback(msg, this);
-                }
-            }
-        ).bind(this));
+    enableHandlers() {
+        this.bot.on('message', (msg) => {
+            this.handler.getAll().forEach(
+                (params) => { params.callback(msg, params.context); }
+            );
+        });
     }
 
     getCmdHelp() {
