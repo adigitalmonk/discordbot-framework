@@ -4,6 +4,7 @@ const Registrar = require('./registrar.js');
 const Configuration = require('./configuration.js');
 const Scheduler = require('./scheduler.js');
 const Handler = require('./handler.js');
+const CommandsHandler = require('./handlers/commands.js');
 
 /**
  * Scaffolding core structure for the discordjs client
@@ -32,7 +33,7 @@ class Framework {
 
         // The listener for the bot to enable commands
         this.addHandler('commands', {
-            'callback': require('./handlers/commands.js'),
+            'callback': CommandsHandler,
             'context': this
         });
   
@@ -198,21 +199,19 @@ class Framework {
         return this.bot.destroy();
     }
 
-    addHandler(handler, params) {
-        this.handler.add(handler, params);
+    addHandler(name, handler) {
+        this.handler.add(name, handler);
         return this;
     }
 
-    removeHandler(handler) {
-        this.handler.del(handler);
+    removeHandler(name) {
+        this.handler.del(name);
         return this;
     }
 
     enableHandlers() {
         this.bot.on('message', (msg) => {
-            this.handler.getAll().forEach(
-                (params) => { params.callback(msg, params.context); }
-            );
+            this.handler.handle(msg);
         });
     }
 
