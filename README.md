@@ -106,6 +106,56 @@ bot.bind('help', {
 });
 ```
 
+## Custom Message Handlers
+We can write custom handlers for messages to perform actions that aren't related to commands.
+
+There are two methods related to this.
+- `addHandler` will create a new one and expects a name for the handler as well as the handler itself. It also supports passing in a DI object/context parameter.
+- `removeHandler` can be used to delete a handler for a given name.
+
+The first parameter of a handler will always be a [Message object](https://discord.js.org/#/docs/main/stable/class/Message) from the Discordjs `message` [Client](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=message) event.  The second parameter will be the DI object/context.
+
+Here's a basic example...
+```
+let counter = 0;
+bot.addHandler('counter', (msg) => {
+    counter += 1;
+    console.log(`I have received ${counter} messages so far!`);
+});
+
+bot.removeHandler('counter');
+```
+
+And here's an example where we use the context object.  Instead of passing in a function directly, we want to pass an object with two keys, `callback` and `context`.  The callback defined will receive too parameters.  The first parameter is the message object itself, the second parameter is the context provided.
+
+```
+const customHandler = require('./my-handler.js');
+const DB = require('./my-db.js');
+
+bot.addHandler('myCustomHandler', {
+    'callback': customHandler,
+    'context' : DB
+});
+```
+
+In the above example, `my-handler.js` exports a function that starts like...
+```
+module.exports = (msg, context) => {
+    // ...
+```
+
+And here's one more example that is a modification of the counter example from earlier to use the context parameter.  I create a simple object to store my simple counter in and pass that as my context, rather than relying on the function closure.
+```
+let counter = 0;
+bot.addHandler('counter', {
+    'callback' : (msg, ctx) => {
+        ctx.counter += 1;
+        console.log(`I have seen ${ctx.counter} messages so far!`);
+    },
+    'context' : { counter }
+});
+```
+
 
 ## Schedule Events
 We can schedule functions to run at specific times. 
@@ -244,6 +294,11 @@ bot.bind('help', {
     'allow_dm'      : true
 });
 
+let counter = 0;
+bot.addHandler('counter', (msg) => {
+    counter += 1;
+    console.log(`I have seen ${counter} messages so far!`);
+});
 
 // Tell the bot to connect to Discord
 bot.connect();
@@ -257,6 +312,10 @@ bot.connect();
 |[NodeJS DotEnv](https://www.npmjs.com/package/dotenv)|Project designed for the purpose of loading configurations into projects|
 
 # Change Log
+## v1.4.0
+- Added new functionality to write custom message handlers/processors
+- Refactored how commands are processed using the custom handlers (command support can now be turned off if desired)
+
 ## v1.3.1
 - Updated the dependencies to account for an issue with NPM loading `uws`.
 - Fixed a small typo in the README, oops!

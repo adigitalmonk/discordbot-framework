@@ -199,22 +199,51 @@ class Framework {
         return this.bot.destroy();
     }
 
+    /**
+     * Add a new handler.  Name is the key when updating / removing later.
+     * 
+     * The callback is the function that is applied to each message.
+     * The context acts as the DI container to provide the function with the necessary objects it needs to do its work.
+     * 
+     * @param {string} name The name to register the handler as
+     * @param {function|object} handler Either a function or an object of the following syntax { "callback" : <function> , "context" : <any> }
+     * @returns {object} this
+     * @memberof Framework
+     */
     addHandler(name, handler) {
         this.handler.add(name, handler);
         return this;
     }
 
+    /**
+     * Unregister a handler
+     * 
+     * @param {string} handler The name of the handler to delete/unregister
+     * @returns {object} this
+     * @memberof Framework
+     */
     removeHandler(name) {
         this.handler.del(name);
         return this;
     }
 
+    /**
+     * Add the listener to the bot that will process the message handlers
+     * 
+     * @memberof Framework
+     */
     enableHandlers() {
         this.bot.on('message', (msg) => {
             this.handler.handle(msg);
         });
     }
 
+    /**
+     * Get the registered help messages for each command from the registrar
+     * 
+     * @returns {object} Object in the style of { 'name' : <command name> , 'value' : <provided help message> }
+     * @memberof Framework
+     */
     getCmdHelp() {
         return this.registrar.getHelp();
     }
