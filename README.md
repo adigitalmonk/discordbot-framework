@@ -35,7 +35,7 @@ The only option that is required for configuration is `secret_key` but, the full
 |:--:|:---|:---:|:---|
 |`secret_key`|integer|_(none)_|The client secret key/token provided on the [Discord Developer](https://discordapp.com/developers/applications/me) page. This is required for the bot to be able to run.|
 |`command_prefix`|string|'!'|The prefix used for commands, e.g. `!syn`|
-|`allowed_channels`|array|[ ]|The channels which the bot are allowed to respond in; an empty array means all channels.|
+|`allowed_channels`|array|[ ]|The channels which the bot is allowed to respond in; an empty array means all channels.|
 |`respond_to_bots`|boolean|false|Whether or not the bot is allowed to respond to other bots.|
 |`playing_msg`|string|false|The "Playing" message for the bot, if `false`, it will skip this feature.|
 |`boot_msg`|string|"Connected!"|The message which shows up on the command line when you boot the bot up, only shown to the person starting the bot.|
@@ -47,7 +47,7 @@ We can add event listeners to the bot.
 
 ```javascript
 bot.observe('message', (msg) => {
-	console.log(`${msg.author.username} sent a message in #${msg.channel.name}`);
+    console.log(`${msg.author.username} sent a message in #${msg.channel.name}`);
 });
 ```
 
