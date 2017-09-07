@@ -1,83 +1,93 @@
 # Introduction
-Welcome to the wonderful world of Discord bots.  Through creating my own Discord bot, I have put together this basic framework to enable the process.
+Welcome to the wonderful world of Discord bots.  Through creating my own Discord bot, I have put together this basic framework to facilitate the process.
 
-The purpose of this project is to make it so that anyone can spin up their own simple Discord bot fairly easily. Simply follow the below instructions and you'll be on the way to your own Discord bot in no time.
+The purpose of this project is to simplify the process of creating a Discord bot so that anyone can create one with minimal effort. Simply follow the instructions below and you will be on your way to creating your own Discord bot in no time.
 
-This project provides a basic wrapper around functionality presented by [discord.js](https://github.com/hydrabolt/discord.js) project.
+This project provides a basic wrapper around functionality produced by the [discord.js](https://github.com/hydrabolt/discord.js) project.
 
 # Setup
+## Prerequisites
+This project requires the installation of [NodeJS / npm](https://nodejs.org/en/) to be able to run and install the bot you need NodeJS to compile the program and npm as a packet manager to download all project dependencies.
+
+Once NodeJS and npm is installed, navigate to the folder in which you would like to create your bot, n the terminal/command prompt, and type `npm install discordbot-framework` and hit enter. This will download the framework and all dependencies for the bot to be able to run.
+
 ## Load the Module
-The first step to get started is to load the scaffolding.
-```
+The first step to get started is to load the scaffolding of the project. Add this line of code to the beginner of your file.
+
+```javascript
 const DiscordBot = require('discordbot-framework');
 let bot = new DiscordBot();
 ```
 
 ## Add the configuration
-Configuration for the bot is provided in the form of a basic object.
+Configuration for the bot is provided in the form of a basic object, how you decide to access the object is at your own discretion.
 
-How you decide to get the object is at your discretion.
-```
+```javascript
 const config = {
     'secret_key' : 'my_discord_provided_secret_key'
 };
 bot.configure(config);
 ```
-The only option that is required for configuration is `secret_key` but the full list of possible options is as follows:
+
+The only option that is required for configuration is `secret_key` but, the full list of possible options are as follows:
 
 |Configuration Key|Data Type|Default Value|Note|
-|---:|:---:|:---:|:---|
-|`secret_key`|integer|_(none)_|The client secret key/token provided on the [Discord Developer](https://discordapp.com/developers/applications/me) page. The bot will fail to boot without this.|
+|:--:|:---|:---:|:---|
+|`secret_key`|integer|_(none)_|The client secret key/token provided on the [Discord Developer](https://discordapp.com/developers/applications/me) page. This is required for the bot to be able to run.|
 |`command_prefix`|string|'!'|The prefix used for commands, e.g. `!syn`|
-|`allowed_channels`|array|[ ]|The channels that the bot is allowed to respond in; an empty array means all channels.|
+|`allowed_channels`|array|[ ]|The channels which the bot are allowed to respond in; an empty array means all channels.|
 |`respond_to_bots`|boolean|false|Whether or not the bot is allowed to respond to other bots.|
-|`playing_msg`|string|false|The "Playing" message for the bot, if `false` will skip this feature.|
-|`boot_msg`|string|"Connected!"|This is just the message that shows up on the command line when you boot the bot up, only really shown to the person starting the bot.|
+|`playing_msg`|string|false|The "Playing" message for the bot, if `false`, it will skip this feature.|
+|`boot_msg`|string|"Connected!"|The message which shows up on the command line when you boot the bot up, only shown to the person starting the bot.|
 
-_Note: If there is no default value, the framework will throw an Error if one isn't specified_
+_Note: If there is no default value, the framework will throw a runtime Error if one isn't specified._
 
 ## Configure the Event Listeners
 We can add event listeners to the bot.
-```
-bot.observe('message', (msg) => console.log(`${msg.author.username} sent a message in #${msg.channel.name}`));
-```
-The observe function takes a string for the first parameter, where the string is one of the events defined by the discordjs `Client`. The second parameter is the callback to fire when the event is triggered.
 
-_Note: You can refer to discord.js's Client API documentation [here](https://discord.js.org/#/docs/main/stable/class/Client) for the supported events_
+```javascript
+bot.observe('message',
+	(msg) => {
+		console.log(`${msg.author.username} sent a message in #${msg.channel.name}`);
+	});
+```
 
-Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which handles processing commands.
-As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
+The `observe` function takes a string for the first parameter, where the string is one of the events defined by the discordjs `Client`. The second parameter is the callback to fire when the event is triggered.
+
+_Note: You can refer to discord.js's Client API documentation [here](https://discord.js.org/#/docs/main/stable/class/Client) for the supported events._
+
+Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which handles processing commands. As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
 
 ## Add commands
 We can also add commands to the bot.
 
-```
-bot.bind('syn', { 
+```javascript
+bot.bind('syn', {
     'callback'      : (msg) => msg.channel.sendMessage('Ack!'),
     'help_message'  : 'Is the bot listening? \n\tUsage: `!syn`',
-    'allow_dm'      : true 
+    'allow_dm'      : true
 });
 ```
 
-The bind function takes in two parameters.
+The `bind` function takes in two parameters.
 - The first argument is the name of the command (e.g., `syn` => `!syn`).
 - The second argument is an object with the required parameters for the command.
 
 |Parameter|Data Type|Default Value|Note|
-|---:|:---:|:---:|:---|
-|callback|function|_(none)_|The function to call when the command is called.|
-|rate_limit|integer|3|The number of times per minute the command can be called by a user.|
-|allow_dm|boolean|false|Whether or not the bot will respond to this command if it's in a direct message|
-|help_message|string|"[undocumented]"|The help message for this command.|
+|:--:|:---|:---:|:---|
+|`callback`|function|_(none)_|The function to call when the command is called.|
+|`rate_limit`|integer|3|The number of times per minute the command can be called by a user.|
+|`allow_dm`|boolean|false|Whether or not the bot will respond to this command if it's in a direct message|
+|`help_message`|string|"[undocumented]"|The help message for this command.|
 
-_Note: If there is no default value, the system will Error if one isn't specified_
+_Note: If there is no default value, the system will Error if one isn't specified._
 
 ### Command Callbacks
 The callback registered for a command is passed two parameters.  The first parameter is a reference to the [Message](https://discord.js.org/#/docs/main/stable/class/Message) object generated by the DiscordJS `message` event. The second parameter is a reference to the framework instance itself which allows your command to interact with data stored as part of the instance (such as the task scheduler or [Client](https://discord.js.org/#/docs/main/stable/class/Client)).
 
 I've found convenience in writing my callbacks into their own module and then importing from there. This gives the callback a complete closure to work with.
 
-```
+```javascript
 const {isup} = require('./commands/status.js');
 bot.bind('isup', {
     'callback'      : isup,
@@ -90,7 +100,8 @@ The system makes no implications for what you can do with the help message param
 There is a command on the bot framework `getCmdHelp()` that will return an array that used in an `Embed` message
 
 Here is an example implementation:
-```
+
+```javascript
 bot.bind('help', {
     'help_message'  : 'This message.\n\tUsage: `!help`',
     'callback'      : (msg, bot) => {
@@ -108,12 +119,13 @@ bot.bind('help', {
 
 
 ## Schedule Events
-We can schedule functions to run at specific times. 
+We can schedule functions to run at specific times.
 
 This is convenient if we want something to happen on a specific schedule.
-```
+
+```javascript
 bot.schedule({
-    'name'      : 'server-list', 
+    'name'      : 'server-list',
     'frequency' : 'hourly',
     'callback'  : (instance) => {
         let servers = instance.getGuilds().reduce((list, guild) => { list.push(guild.name + "|" + guild.id); return list; }, []);
@@ -122,12 +134,13 @@ bot.schedule({
 });
 ```
 By default, the parameter sent in to the callback is a reference to the framework itself, but this can be specified as one of the parameters as seen in the below (fairly useless) example.
-```
+
+```javascript
 // Create some data we want to send in
 let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 bot.schedule({
-    'name'      : 'hourly-notice', 
+    'name'      : 'hourly-notice',
     'frequency' : 'hourly',
     'start_of'  : 'hour',
     'context'   : {bot, days}, // Short hand object notation, we still want to send the bot instance, but we want to also send in the data we created
@@ -138,7 +151,7 @@ bot.schedule({
 ```
 
 |Parameter|Data Type|Default Value|Note|
-|---:|:---:|:---:|:---|
+|:--:|:--:|:---|:---|
 |name|String|_(none)_|**(Required)** The name of the task for scheduling purposes. Names must be unique.|
 |frequency|String|_(none)_|**(Required)** The timeframe for which to fire the event; see the supported schedules table below.|
 |callback|function|_(none)_|**(Required)** The callback to trigger on the schedule.|
@@ -151,7 +164,7 @@ bot.schedule({
 The following frequencies are defined as within the limitations of NodeJS's `setTimeout` / `setInterval` maximum supported delay.
 
 |Frequency|Definition|
-|----:|:----|
+|:----|:----|
 |deciminute|Every ten seconds*|
 |minute|Every minute|
 |hourly|Every hour|
@@ -181,14 +194,16 @@ _This is handled using the `momentjs` `startOf` function. For examples of what s
 
 ## Connect!
 Now that our bot is configured, has it's listeners, and commands added, we can start up the bot.
-```
+
+```javascript
 bot.connect();
 ```
 And if everything went according to plan, your bot should log in to Discord successfully.
 
 # Full Example
 Here is a working example bot that was set up using the framework.
-```
+
+```javascript
 // Load the module
 const DiscordBot = require('discordbot-framework');
 let bot = new DiscordBot();
@@ -222,7 +237,7 @@ bot.observe('guildMemberAdd', (guildMember) => {
 
 // Add an event to the schedule
 bot.schedule({
-    'name'      : 'server-list', 
+    'name'      : 'server-list',
     'frequency' : 'hourly',
     'callback'  : (instance) => {
         let servers = instance.getGuilds().reduce((list, guild) => { list.push(guild.name + "|" + guild.id); return list; }, []);
@@ -248,6 +263,8 @@ bot.bind('help', {
 // Tell the bot to connect to Discord
 bot.connect();
 ```
+
+Now to run the bot, simply go into your terminal/command prompt at the location which the file exists and type `node <filename>.js` and hit enter, where `<filename>` is the name of the file you created. This should start the bot and if succesfuly, the terminal/command prompt will have your `boot_msg` printed in it, in this example it would be "I have connected!".
 
 # References
 |Link|Description|
