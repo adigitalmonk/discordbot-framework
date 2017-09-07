@@ -45,7 +45,7 @@ The observe function takes a string for the first parameter, where the string is
 
 _Note: You can refer to discord.js's Client API documentation [here](https://discord.js.org/#/docs/main/stable/class/Client) for the supported events_
 
-Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which handles processing commands.
+Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which runs all of the message handlers (including commands).
 As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
 
 ## Add commands
