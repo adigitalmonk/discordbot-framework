@@ -7,7 +7,7 @@ This project provides a basic wrapper around functionality produced by the [disc
 
 # Setup
 ## Prerequisites
-This project requires the installation of [NodeJS / npm](https://nodejs.org/en/) to be able to run and install the bot you need NodeJS to compile the program and npm as a packet manager to download all project dependencies.
+This project requires the installation of [NodeJS / npm](https://nodejs.org/en/) to be able to run and install the bot you need NodeJS to run the program and npm as a packet manager to download all project dependencies.
 
 Once NodeJS and npm is installed, navigate to the folder in which you would like to create your bot, n the terminal/command prompt, and type `npm install discordbot-framework` and hit enter. This will download the framework and all dependencies for the bot to be able to run.
 
