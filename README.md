@@ -33,6 +33,7 @@ The only option that is required for configuration is `secret_key` but the full 
 |`respond_to_bots`|boolean|false|Whether or not the bot is allowed to respond to other bots.|
 |`playing_msg`|string|false|The "Playing" message for the bot, if `false` will skip this feature.|
 |`boot_msg`|string|"Connected!"|This is just the message that shows up on the command line when you boot the bot up, only really shown to the person starting the bot.|
+|`enable_cmds`|boolean|true|Setting this to false will tell the bot to skip adding the commands handler; useful if you want to have a non-command based bot.|
 
 _Note: If there is no default value, the framework will throw an Error if one isn't specified_
 
@@ -45,7 +46,7 @@ The observe function takes a string for the first parameter, where the string is
 
 _Note: You can refer to discord.js's Client API documentation [here](https://discord.js.org/#/docs/main/stable/class/Client) for the supported events_
 
-Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which runs all of the message handlers (including commands).
+Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which runs all of the message handlers (including commands, provided you don't disable them).
 As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
 
 ## Add commands
@@ -155,7 +156,6 @@ bot.addHandler('counter', {
     'context' : { counter }
 });
 ```
-
 
 ## Schedule Events
 We can schedule functions to run at specific times. 

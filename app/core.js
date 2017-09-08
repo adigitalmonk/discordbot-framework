@@ -31,23 +31,6 @@ class Framework {
         // Enable custom handlers for messages
         this.enableHandlers();
 
-        // The listener for the bot to enable commands
-        this.addHandler('commands', {
-            'callback': CommandsHandler,
-            'context': this
-        });
-  
-        // This is needed to boot the system
-        this.bot.on('ready', (
-            () => {
-                console.log(this.configuration.getSetting('boot_msg'));
-                const gameSetting = this.configuration.getSetting('playing_msg');
-                if (gameSetting) {
-                    this.bot.user.setGame(gameSetting);
-                }
-            }
-        ).bind(this));
-
         this.active = false;
     }
 
@@ -60,7 +43,27 @@ class Framework {
      * @memberOf Framework
      */
     configure(config) {
-        return this.configuration.load(config);
+        let loaded = this.configuration.load(config);
+
+        if (this.configuration.getSetting('enable_cmds')) {
+            // The listener for the bot to enable commands
+            this.addHandler('commands', {
+                'callback': CommandsHandler,
+                'context': this
+            });
+        }
+  
+        // This is needed to boot the system
+        this.bot.on('ready', () => {
+            console.log(this.configuration.getSetting('boot_msg'));
+            const gameSetting = this.configuration.getSetting('playing_msg');
+            if (gameSetting) {
+                this.bot.user.setGame(gameSetting)
+                    .then(() => { console.log(`Set playing message to: "${gameSetting}"`); });
+            }
+        });
+
+        return loaded;
     }
 
     /**
