@@ -14,7 +14,7 @@ This project provides a basic wrapper around functionality produced by the [disc
 
 This project requires the installation of [NodeJS / npm](https://nodejs.org/en/) to be able to run and install the bot you need NodeJS to run the program and npm as a packet manager to download all project dependencies.
 
-Once NodeJS and npm is installed, navigate to the folder in which you would like to create your bot, n the terminal/command prompt, and type `npm install discordbot-framework` or `npm install https://github.com/adigitalmonk/discordbot-framework.git` and hit enter. This will download the framework and all dependencies for the bot to be able to run.
+Once NodeJS and npm is installed, navigate to the folder in which you would like to create your bot, n the terminal/command prompt, and type `npm install discordbot-framework`, `npm install https://github.com/adigitalmonk/discordbot-framework.git`, or `npm install git+ssh://git@github.com/adigitalmonk/discordbot-framework.git` and hit enter. This will download the framework and all dependencies for the bot to be able to run.
 
 ### Configure Bot to Server
 
@@ -22,13 +22,13 @@ To create the bot application, you can follow the [Discord Application](https://
 
 _Note: You need to be an admin of the server which you would like to add the bot to._
 
-- Click the "New App" button or follow this [link](https://discordapp.com/developers/applications/me/create).
+- Click "New App" or follow this [link](https://discordapp.com/developers/applications/me/create).
 - Enter a name
 - Click "Create App"
-- Click the "Create a Bot User"
+- Click "Create a Bot User"
 - Click "Yes"
 - Copy the Client ID value and continue to the _Add Bot to Server_ section
-- Navigate to the link "https://<span></span>discordapp.com/oauth2/authorize?scope=bot&client_id=[bot_client_id]" where [bot_client_id] is the Client ID you copier earlier on
+- Navigate to the link "https://<span></span>discordapp.com/oauth2/authorize?scope=bot&client_id=[bot_client_id]" where [bot_client_id] is the Client ID you copied earlier on
 - Select the server desired
 - Click "Authorize"
 
