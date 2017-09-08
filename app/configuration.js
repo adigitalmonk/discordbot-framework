@@ -49,6 +49,12 @@ class Configuration {
                 'description'   : 'The message shown as the "Playing ____" message for the bot',
                 'type'          : 'string',
                 'default'       : false
+            },
+            {
+                'name'          : 'enable_cmds',
+                'description'   : 'This option is used to prevent the commands handler from loading (useful if making a bot that does not need commands!)',
+                'type'          : 'boolean',
+                'default'       : true
             }
         ];
 
@@ -124,7 +130,7 @@ class Configuration {
         // Iterate over the options and pull the settings from the config obj or default from schema
         for (let option of options) {
             let defaultVal = this.getSchema(option).default;
-            if (config[option]) {
+            if (config[option] !== undefined) {
                 this.data.set(option, config[option]);
             } else if (defaultVal !== undefined) {
                 this.data.set(option, defaultVal);

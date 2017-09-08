@@ -74,6 +74,4 @@ class Auditor {
     }
 }
 
-// Return as a singleton for now.
-// Probably should eventually not do this as a singleton
 module.exports = Auditor;
