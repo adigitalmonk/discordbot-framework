@@ -3,6 +3,8 @@ const Auditor = require('./auditor.js');
 const Registrar = require('./registrar.js');
 const Configuration = require('./configuration.js');
 const Scheduler = require('./scheduler.js');
+const Handler = require('./handler.js');
+const CommandsHandler = require('./handlers/commands.js');
 
 /**
  * Scaffolding core structure for the discordjs client
@@ -20,24 +22,14 @@ class Framework {
         this.registrar = new Registrar();
         this.configuration = new Configuration();
         this.auditor = new Auditor();
+        this.handler = new Handler();
         this.bot = new Discord.Client();
 
         // Scheduler gets a reference to this as the default context for callback
         this.scheduler = new Scheduler(this);
 
-        // The listener for the bot to enable commands
-        this.enableCommands();
-        
-        // This is needed to boot the system
-        this.bot.on('ready', (
-            () => {
-                console.log(this.configuration.getSetting('boot_msg'));
-                const gameSetting = this.configuration.getSetting('playing_msg');
-                if (gameSetting) {
-                    this.bot.user.setGame(gameSetting);
-                }
-            }
-        ).bind(this));
+        // Enable custom handlers for messages
+        this.enableHandlers();
 
         this.active = false;
     }
@@ -51,7 +43,27 @@ class Framework {
      * @memberOf Framework
      */
     configure(config) {
-        return this.configuration.load(config);
+        let loaded = this.configuration.load(config);
+
+        if (this.configuration.getSetting('enable_cmds')) {
+            // The listener for the bot to enable commands
+            this.addHandler('commands', {
+                'callback': CommandsHandler,
+                'context': this
+            });
+        }
+  
+        // This is needed to boot the system
+        this.bot.on('ready', () => {
+            console.log(this.configuration.getSetting('boot_msg'));
+            const gameSetting = this.configuration.getSetting('playing_msg');
+            if (gameSetting) {
+                this.bot.user.setGame(gameSetting)
+                    .then(() => { console.log(`Set playing message to: "${gameSetting}"`); });
+            }
+        });
+
+        return loaded;
     }
 
     /**
@@ -191,58 +203,50 @@ class Framework {
     }
 
     /**
-     * This is the function that binds the 'message' event for listening for commands.
-     * This should only be called once during the constructor; every time it gets run will add another place to run commands (duplicating the callback calls)
+     * Add a new handler.  Name is the key when updating / removing later.
      * 
-     * @memberOf Framework
+     * The callback is the function that is applied to each message.
+     * The context acts as the DI container to provide the function with the necessary objects it needs to do its work.
+     * 
+     * @param {string} name The name to register the handler as
+     * @param {function|object} handler Either a function or an object of the following syntax { "callback" : <function> , "context" : <any> }
+     * @returns {object} this
+     * @memberof Framework
      */
-    enableCommands() {
-        this.bot.on('message', (
-            msg => {
-                let allowed_channels = this.configuration.getSetting('allowed_channels');
-                if (
-                    allowed_channels
-                    && allowed_channels.indexOf(msg.channel.name) < 0
-                    && msg.channel.type === 'text'
-                ) {
-                    // If allowed_channels isn't empty and the channel is in the list of allowed channels
-                    return;
-                }
-
-                // Act on messages from bots?
-                if (
-                    !this.configuration.getSetting('respond_to_bots') 
-                    && msg.author.bot
-                ) {
-                    // If respond to bots is set to false and the msg is from a bot, stop
-                    return;
-                }
-
-                let prefix = this.configuration.getSetting('command_prefix');
-                if (msg.content.startsWith(prefix)) { // The msg starts with the commands prefix
-                    let args = msg.content.split(" ");
-                    let cmd_name = args.shift().replace(prefix, "").toLowerCase();
-                    let cmd = this.registrar.lookup(cmd_name);
-
-                    if (
-                        !cmd // command is defined
-                        || !this.auditor.permitted(msg.author.id, cmd_name, cmd.rate_limit) // User isn't over the rate limit
-                        || (['dm', 'group'].indexOf(msg.channel.type) > -1 && !cmd.allow_dm) // Command isn't in a DM
-                    ) {
-                        return;
-                    }
-
-                    // Record that the user used a command
-                    this.auditor.track(msg.author.id, cmd_name);
-
-                    let cmd_params = this.registrar.lookup(cmd_name);
-                    // Commands get instance of the msg and reference to this bot
-                    cmd_params.callback(msg, this);
-                }
-            }
-        ).bind(this));
+    addHandler(name, handler) {
+        this.handler.add(name, handler);
+        return this;
     }
 
+    /**
+     * Unregister a handler
+     * 
+     * @param {string} handler The name of the handler to delete/unregister
+     * @returns {object} this
+     * @memberof Framework
+     */
+    removeHandler(name) {
+        this.handler.del(name);
+        return this;
+    }
+
+    /**
+     * Add the listener to the bot that will process the message handlers
+     * 
+     * @memberof Framework
+     */
+    enableHandlers() {
+        this.bot.on('message', (msg) => {
+            this.handler.handle(msg);
+        });
+    }
+
+    /**
+     * Get the registered help messages for each command from the registrar
+     * 
+     * @returns {object} Object in the style of { 'name' : <command name> , 'value' : <provided help message> }
+     * @memberof Framework
+     */
     getCmdHelp() {
         return this.registrar.getHelp();
     }

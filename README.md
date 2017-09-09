@@ -68,8 +68,9 @@ The only option that is required for configuration is `secret_key` but, the full
 |`command_prefix`|string|'!'|The prefix used for commands, e.g. `!syn`|
 |`allowed_channels`|array|[ ]|The channels which the bot is allowed to respond in; an empty array means all channels.|
 |`respond_to_bots`|boolean|false|Whether or not the bot is allowed to respond to other bots.|
-|`playing_msg`|string|false|The "Playing" message for the bot, if `false`, it will skip this feature.|
-|`boot_msg`|string|"Connected!"|The message which shows up on the command line when you boot the bot up, only shown to the person starting the bot.|
+|`playing_msg`|string|false|The "Playing" message for the bot, if `false` will skip this feature.|
+|`boot_msg`|string|"Connected!"|This is just the message that shows up on the command line when you boot the bot up, only really shown to the person starting the bot.|
+|`enable_cmds`|boolean|true|Setting this to false will tell the bot to skip adding the commands handler; useful if you want to have a non-command based bot.|
 
 _Note: If there is no default value, the framework will throw a runtime Error if one is not specified._
 
@@ -85,9 +86,8 @@ bot.observe('message', (msg) => {
 
 The `observe` function takes a string for the first parameter, where the string is one of the events defined by the discordjs `Client`. The second parameter is the callback to fire when the event is triggered.
 
-_Note: You can refer to the discord.js Client API documentation [here](https://discord.js.org/#/docs/main/stable/class/Client) for the supported events._
-
-Two event listeners are added automatically as part of the framework; one for `'ready'` as it is required for `discord.js` to start, and the other for `message` which handles processing commands. As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
+Two event listeners are added automatically as part of the framework; one for `'ready'` as it's required for `discord.js` to start, and the other for `message` which runs all of the message handlers (including commands, provided you don't disable them).
+As event listeners can be added multiple times for the same event, these two event listeners should not affect the code you write for the bot.
 
 ## Add commands
 
@@ -151,6 +151,55 @@ bot.bind('help', {
 });
 ```
 
+## Custom Message Handlers
+We can write custom handlers for messages to perform actions that aren't related to commands.
+
+There are two methods related to this.
+- `addHandler` will create a new one and expects a name for the handler as well as the handler itself. It also supports passing in a DI object/context parameter.
+- `removeHandler` can be used to delete a handler for a given name.
+
+The first parameter of a handler will always be a [Message object](https://discord.js.org/#/docs/main/stable/class/Message) from the Discordjs `message` [Client](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=message) event.  The second parameter will be the DI object/context.
+
+Here's a basic example...
+```
+let counter = 0;
+bot.addHandler('counter', (msg) => {
+    counter += 1;
+    console.log(`I have received ${counter} messages so far!`);
+});
+
+bot.removeHandler('counter');
+```
+
+And here's an example where we use the context object.  Instead of passing in a function directly, we want to pass an object with two keys, `callback` and `context`.  The callback defined will receive too parameters.  The first parameter is the message object itself, the second parameter is the context provided.
+
+```
+const customHandler = require('./my-handler.js');
+const DB = require('./my-db.js');
+
+bot.addHandler('myCustomHandler', {
+    'callback': customHandler,
+    'context' : DB
+});
+```
+
+In the above example, `my-handler.js` exports a function that starts like...
+```
+module.exports = (msg, context) => {
+    // ...
+```
+
+And here's one more example that is a modification of the counter example from earlier to use the context parameter.  I create a simple object to store my simple counter in and pass that as my context, rather than relying on the function closure.
+```
+let counter = 0;
+bot.addHandler('counter', {
+    'callback' : (msg, ctx) => {
+        ctx.counter += 1;
+        console.log(`I have seen ${ctx.counter} messages so far!`);
+    },
+    'context' : { counter }
+});
+```
 
 ## Schedule Events
 
@@ -296,6 +345,11 @@ bot.bind('help', {
     'allow_dm'      : true
 });
 
+let counter = 0;
+bot.addHandler('counter', (msg) => {
+    counter += 1;
+    console.log(`I have seen ${counter} messages so far!`);
+});
 
 // Tell the bot to connect to Discord
 bot.connect();
@@ -312,6 +366,11 @@ Now to run the bot, simply go into your terminal/command prompt at the location 
 |[NodeJS DotEnv](https://www.npmjs.com/package/dotenv)|Project designed for the purpose of loading configurations into projects|
 
 # Change Log
+
+## v1.4.0
+
+- Added new functionality to write custom message handlers/processors
+- Refactored how commands are processed using the custom handlers (command support can now be turned off if desired)
 
 ## v1.3.1
 
