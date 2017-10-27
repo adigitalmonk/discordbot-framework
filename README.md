@@ -16,15 +16,18 @@ This project requires the installation of [NodeJS / npm](https://nodejs.org/en/)
 
 Once NodeJS and npm is installed, navigate to the folder in which you would like to create your bot. In the terminal/command prompt type one of the following lines and hit enter to download the framework:
 
+From NPM:
 - `npm install discordbot-framework`
-- `npm install https://github.com/adigitalmonk/discordbot-framework.git`
-- `npm install git+ssh://git@github.com/adigitalmonk/discordbot-framework.git`
 
-This will download the framework and all the dependencies needed to get your bot up and running.
+From GitHub:
+- `npm install adigitalmonk/discordbot-framework#master`
+- `npm install adigitalmonk/discordbot-framework#<release_tag>`
+
+This will download the framework and all the dependencies needed to get your bot up and running. 
 
 ### Configure Bot to Server
 
-To create the bot application, you can follow the [Discord Application](https://discordapp.com/developers/applications/me) page and follow from there.
+To create the bot application, you can navigate to the [Discord Application](https://discordapp.com/developers/applications/me) page and follow the below steps from there.
 
 _Note: You need to be an admin of the server which you would like to add the bot to._
 
@@ -256,7 +259,7 @@ The following frequencies are defined as within the limitations of NodeJS's `set
 |weekly|Every 7 days|
 |biweekly|Every 14 days|
 
-_* `deciminute` was created for testing, but the option was left because there is probably a use case for it. Highly, highly, highly recommend **AGAINST** hitting the Discord API every ten seconds._
+_* `deciminute` was created for testing, but the option was left because there is probably a use case for it. I recommend **against** hitting the Discord API every ten seconds, but that doesn't mean you can't use it internally._
 
 The following `start_of` options are supported.
 
