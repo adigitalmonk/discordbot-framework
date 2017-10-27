@@ -315,6 +315,8 @@ bot.connect();
 ## v1.4.0
 - Added new functionality to write custom message handlers/processors
 - Refactored how commands are processed using the custom handlers (command support can now be turned off if desired)
+- Updated `discord.js` to `11.2.1`
+- Added `uws@0.14.5` (optional requirement for `discord.js@11.2.1`), this should solve issues related to the bot randomly disconnecting.
 
 ## v1.3.1
 - Updated the dependencies to account for an issue with NPM loading `uws`.
